@@ -135,3 +135,5 @@ Component tokens — sempre apontam para semantics e brand já filtrado.
 ```
 
 ### Dessa forma, mantemos 5 collections no Figma para máxima clareza, mas no front-end consumimos apenas 4 arquivos JSON, com globals e brand unidos em brand.json.
+
+Figma - https://www.figma.com/design/xQyQGMGEBvCiFIMe8pyOgU/DDS?node-id=2-13&t=KQPO3H9etlYu79qh-1
