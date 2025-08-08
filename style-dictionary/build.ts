@@ -10,18 +10,60 @@ let mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
 // Função para descobrir todas as marcas disponíveis no JSON
 function discoverBrands(tree: any): string[] {
   const brandsSet = new Set<string>();
+  const themesSet = new Set<string>();
+  
+  // Primeiro, descobrir todos os temas que existem no JSON
+  function findThemes(obj: any) {
+    if (Array.isArray(obj)) {
+      obj.forEach(findThemes);
+    } else if (obj && typeof obj === 'object') {
+      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
+        Object.keys(obj.$extensions.mode).forEach(mode => themesSet.add(mode));
+      }
+      Object.values(obj).forEach(findThemes);
+    }
+  }
+  
+  if (tree.Semantics) {
+    findThemes(tree.Semantics);
+  }
+  
+  // Agora descobrir marcas (tudo que não é tema)
+  function findBrands(obj: any) {
+    if (Array.isArray(obj)) {
+      obj.forEach(findBrands);
+    } else if (obj && typeof obj === 'object') {
+      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
+        Object.keys(obj.$extensions.mode).forEach(mode => {
+          // Se não é um tema, então é uma marca
+          if (!themesSet.has(mode)) {
+            brandsSet.add(mode);
+          }
+        });
+      }
+      Object.values(obj).forEach(findBrands);
+    }
+  }
+  
+  if (tree.Brands) {
+    findBrands(tree.Brands);
+  }
+  
+  return Array.from(brandsSet).sort();
+}
+
+// Função para descobrir todos os temas disponíveis no JSON
+function discoverThemes(tree: any): string[] {
+  const themesSet = new Set<string>();
   
   function traverse(obj: any) {
     if (Array.isArray(obj)) {
       obj.forEach(traverse);
     } else if (obj && typeof obj === 'object') {
-      // Procurar por $extensions.mode
+      // Procurar por $extensions.mode em tokens Semantics (que têm temas)
       if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
-        Object.keys(obj.$extensions.mode).forEach(brand => {
-          // Filtrar apenas brands, não modos de cor
-          if (!['light', 'dark', 'contrast'].includes(brand)) {
-            brandsSet.add(brand);
-          }
+        Object.keys(obj.$extensions.mode).forEach(mode => {
+          themesSet.add(mode);
         });
       }
       
@@ -30,12 +72,18 @@ function discoverBrands(tree: any): string[] {
     }
   }
   
-  traverse(tree);
-  return Array.from(brandsSet).sort();
+  // Apenas procurar em Semantics, onde estão os temas
+  if (tree.Semantics) {
+    traverse(tree.Semantics);
+  }
+  
+  return Array.from(themesSet).sort();
 }
 
 const availableBrands = discoverBrands(mergedTree);
+const availableThemes = discoverThemes(mergedTree);
 console.log(`📋 Marcas descobertas: ${availableBrands.join(', ')}`);
+console.log(`🎨 Temas descobertos: ${availableThemes.join(', ')}`);
 
 const STRIP_SEGMENTS = new Set(['Semantics', 'Brands', 'Global']);
 const SECONDARY_COLOR_BRANCHES = new Set(['color', 'text', 'container', 'feedback', 'action', 'stroke']);
@@ -192,65 +240,58 @@ StyleDictionary.registerFormat({
       return `  ${name}: ${value};`;
     }
 
-    // LIGHT (completo)
-    const lightLines: string[] = [];
+    // Determinar tema padrão (sempre 'light' se disponível, senão o primeiro)
+    const defaultTheme = availableThemes.includes('light') ? 'light' : availableThemes[0];
+    
+    // TEMA PADRÃO (completo) - sempre light ou primeiro tema
+    const defaultLines: string[] = [];
     for (const t of dictionary.allTokens) {
       if (t.path[0] === 'Semantics') {
-        const v = pickModeValue(t, 'light') ?? t.value;
-        lightLines.push(cssDecl(t.name, v));
+        const v = pickModeValue(t, defaultTheme) ?? t.value;
+        defaultLines.push(cssDecl(t.name, v));
       } else if (t.path[0] === 'Brands') {
         const v = pickModeValue(t, brand) ?? t.value;
-        lightLines.push(cssDecl(t.name, v));
+        defaultLines.push(cssDecl(t.name, v));
       } else if (t.path[0] === 'Global') {
-        lightLines.push(cssDecl(t.name, t.value as string));
-      }
-    }
-
-    // DARK (apenas cores de Semantics)
-    const darkLines: string[] = [];
-    for (const t of dictionary.allTokens) {
-      if (t.path[0] === 'Semantics' && SECONDARY_COLOR_BRANCHES.has(t.path[1])) {
-        const v = pickModeValue(t, 'dark');
-        if (v) darkLines.push(cssDecl(t.name, v));
-      }
-    }
-
-    // CONTRAST (apenas cores de Semantics)
-    const contrastLines: string[] = [];
-    for (const t of dictionary.allTokens) {
-      if (t.path[0] === 'Semantics' && SECONDARY_COLOR_BRANCHES.has(t.path[1])) {
-        const v = pickModeValue(t, 'contrast');
-        if (v) contrastLines.push(cssDecl(t.name, v));
+        defaultLines.push(cssDecl(t.name, t.value as string));
       }
     }
 
     const blocks: string[] = [];
 
-    // default/light
-    blocks.push(`:root,
-:root[data-color-scheme="light"] {
-${lightLines.join('\n')}
+    // Bloco padrão/light
+    const defaultSelector = defaultTheme === 'light' 
+      ? ':root,\n:root[data-color-scheme="light"]' 
+      : `:root,\n:root[data-color-scheme="${defaultTheme}"]`;
+      
+    blocks.push(`${defaultSelector} {
+${defaultLines.join('\n')}
 }`);
 
-    // dark
-    if (darkLines.length) {
-      blocks.push(`:root[data-color-scheme="dark"] {
-${darkLines.join('\n')}
+    // Outros temas (apenas cores de Semantics)
+    for (const theme of availableThemes) {
+      if (theme === defaultTheme) continue; // Pular o tema padrão que já foi processado
+      
+      const themeLines: string[] = [];
+      for (const t of dictionary.allTokens) {
+        if (t.path[0] === 'Semantics' && SECONDARY_COLOR_BRANCHES.has(t.path[1])) {
+          const v = pickModeValue(t, theme);
+          if (v) themeLines.push(cssDecl(t.name, v));
+        }
+      }
+      
+      if (themeLines.length) {
+        blocks.push(`:root[data-color-scheme="${theme}"] {
+${themeLines.join('\n')}
 }`);
-    }
-
-    // contrast
-    if (contrastLines.length) {
-      blocks.push(`:root[data-color-scheme="contrast"] {
-${contrastLines.join('\n')}
-}`);
+      }
     }
 
     return blocks.join('\n\n') + '\n';
   },
 });
 
-// SCSS (apenas light – estático)
+// SCSS (apenas tema padrão – estático)
 StyleDictionary.registerFormat({
   name: 'format/dds-scss-light',
   formatter: ({ dictionary, file }) => {
@@ -264,11 +305,14 @@ StyleDictionary.registerFormat({
       throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
     }
 
+    // Determinar tema padrão (sempre 'light' se disponível, senão o primeiro)
+    const defaultTheme = availableThemes.includes('light') ? 'light' : availableThemes[0];
+
     const lines: string[] = [];
 
     for (const t of dictionary.allTokens) {
       if (t.path[0] === 'Semantics') {
-        const v = pickModeValue(t, 'light') ?? t.value;
+        const v = pickModeValue(t, defaultTheme) ?? t.value;
         lines.push(`${t.name}: ${v};`);
       } else if (t.path[0] === 'Brands') {
         const v = pickModeValue(t, brand) ?? t.value;

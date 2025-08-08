@@ -79,50 +79,6 @@
   --dds_corner_radius_thick: 4px;
 }
 
-:root[data-color-scheme="dark"] {
-  --dds_color_surface_brand_primary: #1A1A1A;
-  --dds_color_surface_brand_on_primary: #CCCCCC;
-  --dds_color_surface_brand_on_secundary: #CCCCCC;
-  --dds_color_surface_brand_secondary: #1A1A1A;
-  --dds_color_surface_neutral_lowest: #1A1A1A;
-  --dds_color_surface_neutral_low: #1A1A1A;
-  --dds_color_text_neutral_title: #1A1A1A;
-  --dds_color_text_neutral_body: #CCCCCC;
-  --dds_color_text_neutral_label: #CCCCCC;
-  --dds_color_text_action_primary: #1A1A1A;
-  --dds_color_text_action_secondary: #CCCCCC;
-  --dds_color_text_action_link: #CCCCCC;
-  --dds_color_text_feedback_warning_on_lowest: #1A1A1A;
-  --dds_color_text_feedback_warning_on_high: #CCCCCC;
-  --dds_color_text_feedback_error_on_lowest: #1A1A1A;
-  --dds_color_text_feedback_error_on_high: #CCCCCC;
-  --dds_color_text_feedback_success_on_lowest: #1A1A1A;
-  --dds_color_text_feedback_success_on_high: #CCCCCC;
-  --dds_color_stroke_neutral_base: #1A1A1A;
-  --dds_color_stroke_neutral_alternative: #1A1A1A;
-  --dds_color_stroke_neutral_contrast: #1A1A1A;
-  --dds_color_stroke_feedback_error: #1A1A1A;
-  --dds_color_stroke_feedback_success: #1A1A1A;
-  --dds_color_stroke_feedback_warning: #1A1A1A;
-  --dds_color_stroke_brand_on_primary: #1A1A1A;
-  --dds_color_stroke_brand_on_secundary: #1A1A1A;
-  --dds_color_container_neutral_lowest: #1A1A1A;
-  --dds_color_container_neutral_low: #1A1A1A;
-  --dds_color_container_neutral_high: #1A1A1A;
-  --dds_color_container_neutral_medium: #1A1A1A;
-  --dds_color_container_neutral_disabled: #1A1A1A;
-  --dds_color_container_feedback_success_lowest: #1A1A1A;
-  --dds_color_container_feedback_success_high: #CCCCCC;
-  --dds_color_container_feedback_warning_lowest: #1A1A1A;
-  --dds_color_container_feedback_warning_high: #CCCCCC;
-  --dds_color_container_feedback_error_lowest: #1A1A1A;
-  --dds_color_container_feedback_error_high: #CCCCCC;
-  --dds_color_container_brand_primary: #1A1A1A;
-  --dds_color_container_brand_on_primary: #1A1A1A;
-  --dds_color_container_brand_secondary: #1A1A1A;
-  --dds_color_container_brand_on_secundary: #1A1A1A;
-}
-
 :root[data-color-scheme="contrast"] {
   --dds_color_surface_brand_primary: #FFE100;
   --dds_color_surface_brand_on_primary: #FFE100;
@@ -165,4 +121,48 @@
   --dds_color_container_brand_on_primary: #FFE100;
   --dds_color_container_brand_secondary: #FFE100;
   --dds_color_container_brand_on_secundary: #FFE100;
+}
+
+:root[data-color-scheme="dark"] {
+  --dds_color_surface_brand_primary: #1A1A1A;
+  --dds_color_surface_brand_on_primary: #CCCCCC;
+  --dds_color_surface_brand_on_secundary: #CCCCCC;
+  --dds_color_surface_brand_secondary: #1A1A1A;
+  --dds_color_surface_neutral_lowest: #1A1A1A;
+  --dds_color_surface_neutral_low: #1A1A1A;
+  --dds_color_text_neutral_title: #1A1A1A;
+  --dds_color_text_neutral_body: #CCCCCC;
+  --dds_color_text_neutral_label: #CCCCCC;
+  --dds_color_text_action_primary: #1A1A1A;
+  --dds_color_text_action_secondary: #CCCCCC;
+  --dds_color_text_action_link: #CCCCCC;
+  --dds_color_text_feedback_warning_on_lowest: #1A1A1A;
+  --dds_color_text_feedback_warning_on_high: #CCCCCC;
+  --dds_color_text_feedback_error_on_lowest: #1A1A1A;
+  --dds_color_text_feedback_error_on_high: #CCCCCC;
+  --dds_color_text_feedback_success_on_lowest: #1A1A1A;
+  --dds_color_text_feedback_success_on_high: #CCCCCC;
+  --dds_color_stroke_neutral_base: #1A1A1A;
+  --dds_color_stroke_neutral_alternative: #1A1A1A;
+  --dds_color_stroke_neutral_contrast: #1A1A1A;
+  --dds_color_stroke_feedback_error: #1A1A1A;
+  --dds_color_stroke_feedback_success: #1A1A1A;
+  --dds_color_stroke_feedback_warning: #1A1A1A;
+  --dds_color_stroke_brand_on_primary: #1A1A1A;
+  --dds_color_stroke_brand_on_secundary: #1A1A1A;
+  --dds_color_container_neutral_lowest: #1A1A1A;
+  --dds_color_container_neutral_low: #1A1A1A;
+  --dds_color_container_neutral_high: #1A1A1A;
+  --dds_color_container_neutral_medium: #1A1A1A;
+  --dds_color_container_neutral_disabled: #1A1A1A;
+  --dds_color_container_feedback_success_lowest: #1A1A1A;
+  --dds_color_container_feedback_success_high: #CCCCCC;
+  --dds_color_container_feedback_warning_lowest: #1A1A1A;
+  --dds_color_container_feedback_warning_high: #CCCCCC;
+  --dds_color_container_feedback_error_lowest: #1A1A1A;
+  --dds_color_container_feedback_error_high: #CCCCCC;
+  --dds_color_container_brand_primary: #1A1A1A;
+  --dds_color_container_brand_on_primary: #1A1A1A;
+  --dds_color_container_brand_secondary: #1A1A1A;
+  --dds_color_container_brand_on_secundary: #1A1A1A;
 }
