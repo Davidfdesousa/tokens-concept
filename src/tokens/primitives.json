@@ -1,0 +1,110 @@
+{
+  "Primitives": {
+    "colors": {
+      "neutral": {
+        "0": {
+          "value": "#F1F1F1",
+          "type": "other"
+        },
+        "200": {
+          "value": "#CCCCCC",
+          "type": "other"
+        },
+        "900": {
+          "value": "#1A1A1A",
+          "type": "other"
+        }
+      },
+      "green": {
+        "200": {
+          "value": "#32F950",
+          "type": "other"
+        },
+        "500": {
+          "value": "#09951E",
+          "type": "other"
+        },
+        "800": {
+          "value": "#014214",
+          "type": "other"
+        }
+      },
+      "blue": {
+        "200": {
+          "value": "#3FA2FF",
+          "type": "other"
+        },
+        "500": {
+          "value": "#1C20E7",
+          "type": "other"
+        },
+        "800": {
+          "value": "#010377",
+          "type": "other"
+        }
+      },
+      "violet": {
+        "200": {
+          "value": "#B758FF",
+          "type": "other"
+        },
+        "500": {
+          "value": "#7713C3",
+          "type": "other"
+        },
+        "800": {
+          "value": "#310056",
+          "type": "other"
+        }
+      },
+      "scarlet": {
+        "200": {
+          "value": "#F17575",
+          "type": "other"
+        },
+        "500": {
+          "value": "#AF0D0D",
+          "type": "other"
+        },
+        "600": {
+          "value": "#4C0000",
+          "type": "other"
+        }
+      },
+      "yellow": {
+        "500": {
+          "value": "#FFE100",
+          "type": "other"
+        }
+      }
+    },
+    "spacing": {
+      "1": {
+        "value": "4px",
+        "type": "other"
+      },
+      "2": {
+        "value": "8px",
+        "type": "other"
+      }
+    },
+    "sizing": {
+      "unit_8": {
+        "value": "8px",
+        "type": "other"
+      },
+      "unit_16": {
+        "value": "16px",
+        "type": "other"
+      },
+      "unit_24": {
+        "value": "24px",
+        "type": "other"
+      },
+      "unit_1": {
+        "value": "1px",
+        "type": "other"
+      }
+    }
+  }
+}
