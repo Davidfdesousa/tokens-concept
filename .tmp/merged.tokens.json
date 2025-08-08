@@ -115,7 +115,7 @@
               "mode": {
                 "light": "{colors.neutral.0}",
                 "dark": "{colors.neutral.200}",
-                "contrast": "{Semantics.color.text.neutral.body}"
+                "contrast": "{colors.neutral.900}"
               }
             }
           }

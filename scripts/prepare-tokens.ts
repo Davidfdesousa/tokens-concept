@@ -5,7 +5,6 @@
  * aplicando transformações e correções necessárias antes de serem processados pelo Style Dictionary.
  * 
  * Funcionalidades:
- * - Corrige referências de tokens
  * - Remove unidades incorretas (px em opacity, font-weight)
  * - Converte unidades de motion (px → ms)
  * - Expõe primitives no nível raiz
@@ -39,25 +38,7 @@ function writeJson(file: string, data: AnyObj) {
 
 
 
-/**
- * Substitui strings que contêm referências de tokens usando regex
- * Percorre recursivamente o objeto procurando por strings que correspondam ao padrão
- * Ex: corrige "{color.text.body}" → "{Semantics.color.text.body}"
- */
-function replaceInStringRefs(obj: any, find: RegExp, replacer: (match: string, ...args: any[]) => string): any {
-  if (Array.isArray(obj)) return obj.map((v) => replaceInStringRefs(v, find, replacer));
-  if (obj && typeof obj === 'object') {
-    const out: AnyObj = {};
-    for (const [k, v] of Object.entries(obj)) {
-      out[k] = replaceInStringRefs(v, find, replacer);
-    }
-    return out;
-  }
-  if (typeof obj === 'string') {
-    return obj.replace(find, replacer);
-  }
-  return obj;
-}
+
 
 /**
  * Remove a unidade 'px' de strings que representam números
@@ -95,13 +76,9 @@ function prepare() {
   const primitives = readJson(path.join(SRC, 'primitives.json'));
   const semanticsBrandsGlobal = readJson(path.join(SRC, 'semantics.json'));
 
-  // 1) Corrigir referências incompletas: {color.text.body} → {Semantics.color.text.body}
-  // Algumas referências nos tokens fonte estão sem o namespace completo
-  const fixedRefSemantics = replaceInStringRefs(semanticsBrandsGlobal, /\{color\./g, () => '{Semantics.color.');
-
-  // 2) Coerções de valores específicas para corrigir unidades incorretas nos dados fonte
+  // 1) Coerções de valores específicas para corrigir unidades incorretas nos dados fonte
   // TODO: Estes fixes deveriam ser aplicados diretamente nos JSONs fonte no futuro
-  const coerced = mapValuesByPath(fixedRefSemantics, (val, p) => {
+  const coerced = mapValuesByPath(semanticsBrandsGlobal, (val, p) => {
     if (typeof val !== 'string') return val;
 
     const pathStr = p.join('.');
