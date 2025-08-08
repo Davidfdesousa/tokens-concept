@@ -2,109 +2,105 @@ import fs from 'node:fs';
 import path from 'node:path';
 import StyleDictionary, { TransformedToken } from 'style-dictionary';
 
+// Constants
 const ROOT = process.cwd();
 const MERGED = path.join(ROOT, '.tmp', 'merged.tokens.json');
+const DEFAULT_THEME = 'light';
 
-let mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
+const mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
 
-// Função para descobrir todas as marcas disponíveis no JSON
-function discoverBrands(tree: any): string[] {
+// Types
+interface TokenTree {
+  Semantics?: any;
+  Brands?: any;
+  Global?: any;
+}
+
+interface DiscoveryResult {
+  brands: string[];
+  themes: string[];
+}
+
+/**
+ * Função unificada para descobrir marcas e temas do JSON
+ * Evita duplicação de lógica de traversal
+ */
+function discoverBrandsAndThemes(tree: TokenTree): DiscoveryResult {
   const brandsSet = new Set<string>();
   const themesSet = new Set<string>();
   
-  // Primeiro, descobrir todos os temas que existem no JSON
-  function findThemes(obj: any) {
+  function traverseForModes(obj: any, isSemantics = false) {
     if (Array.isArray(obj)) {
-      obj.forEach(findThemes);
-    } else if (obj && typeof obj === 'object') {
-      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
-        Object.keys(obj.$extensions.mode).forEach(mode => themesSet.add(mode));
-      }
-      Object.values(obj).forEach(findThemes);
+      obj.forEach(item => traverseForModes(item, isSemantics));
+      return;
     }
-  }
-  
-  if (tree.Semantics) {
-    findThemes(tree.Semantics);
-  }
-  
-  // Agora descobrir marcas (tudo que não é tema)
-  function findBrands(obj: any) {
-    if (Array.isArray(obj)) {
-      obj.forEach(findBrands);
-    } else if (obj && typeof obj === 'object') {
-      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
-        Object.keys(obj.$extensions.mode).forEach(mode => {
-          // Se não é um tema, então é uma marca
-          if (!themesSet.has(mode)) {
-            brandsSet.add(mode);
-          }
-        });
-      }
-      Object.values(obj).forEach(findBrands);
-    }
-  }
-  
-  if (tree.Brands) {
-    findBrands(tree.Brands);
-  }
-  
-  return Array.from(brandsSet).sort();
-}
-
-// Função para descobrir todos os temas disponíveis no JSON
-function discoverThemes(tree: any): string[] {
-  const themesSet = new Set<string>();
-  
-  function traverse(obj: any) {
-    if (Array.isArray(obj)) {
-      obj.forEach(traverse);
-    } else if (obj && typeof obj === 'object') {
-      // Procurar por $extensions.mode em tokens Semantics (que têm temas)
-      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
-        Object.keys(obj.$extensions.mode).forEach(mode => {
+    
+    if (!obj || typeof obj !== 'object') return;
+    
+    // Coletar modos de $extensions.mode
+    if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
+      Object.keys(obj.$extensions.mode).forEach(mode => {
+        if (isSemantics) {
           themesSet.add(mode);
-        });
-      }
-      
-      // Continuar traversing
-      Object.values(obj).forEach(traverse);
+        } else {
+          brandsSet.add(mode);
+        }
+      });
     }
+    
+    // Continuar traversal
+    Object.values(obj).forEach(value => traverseForModes(value, isSemantics));
   }
   
-  // Apenas procurar em Semantics, onde estão os temas
+  // Descobrir temas em Semantics
   if (tree.Semantics) {
-    traverse(tree.Semantics);
+    traverseForModes(tree.Semantics, true);
   }
   
-  return Array.from(themesSet).sort();
+  // Descobrir marcas em Brands
+  if (tree.Brands) {
+    traverseForModes(tree.Brands, false);
+  }
+  
+  return {
+    brands: Array.from(brandsSet).sort(),
+    themes: Array.from(themesSet).sort()
+  };
 }
 
-const availableBrands = discoverBrands(mergedTree);
-const availableThemes = discoverThemes(mergedTree);
+const { brands: availableBrands, themes: availableThemes } = discoverBrandsAndThemes(mergedTree);
 console.log(`📋 Marcas descobertas: ${availableBrands.join(', ')}`);
 console.log(`🎨 Temas descobertos: ${availableThemes.join(', ')}`);
 
+// Configuration constants
 const STRIP_SEGMENTS = new Set(['Semantics', 'Brands', 'Global']);
-const SECONDARY_COLOR_BRANCHES = new Set(['color', 'text', 'container', 'feedback', 'action', 'stroke']);
+const COLOR_BRANCHES = new Set(['color', 'text', 'container', 'feedback', 'action', 'stroke']);
 
-const toSnake = (s: string) =>
-  s
+/**
+ * Converte string para snake_case
+ */
+const toSnake = (str: string): string =>
+  str
     .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
     .replace(/[^\w]+/g, '_')
     .replace(/_+/g, '_')
     .replace(/^_+|_+$/g, '')
     .toLowerCase();
 
-function get(obj: any, pathArr: string[]): any {
-  return pathArr.reduce((acc, k) => (acc ? acc[k] : undefined), obj);
-}
+/**
+ * Getter seguro para objetos aninhados
+ */
+const getNestedValue = (obj: any, pathArr: string[]): any =>
+  pathArr.reduce((acc, k) => acc?.[k], obj);
 
-function resolveRefString(ref: string, visited: Set<string> = new Set()): string | undefined {
-  const m = /^\{([^}]+)\}$/.exec(ref.trim());
-  if (!m) return ref; // retorna o valor original se não for uma referência
+/**
+ * Resolve referências de tokens ({path.to.token})
+ */
+function resolveReference(ref: string, visited = new Set<string>()): string | undefined {
+  const match = /^\{([^}]+)\}$/.exec(ref.trim());
+  if (!match) return ref;
   
-  const refPath = m[1];
+  const refPath = match[1];
   if (visited.has(refPath)) {
     console.warn(`Circular reference detected: ${refPath}`);
     return undefined;
@@ -112,34 +108,35 @@ function resolveRefString(ref: string, visited: Set<string> = new Set()): string
   
   visited.add(refPath);
   const pathParts = refPath.split('.');
-  const hit = get(mergedTree, pathParts);
+  const target = getNestedValue(mergedTree, pathParts);
   
-  if (hit && typeof hit === 'object' && 'value' in hit) {
-    const value = hit.value;
-    if (typeof value === 'string' && value.includes('{')) {
-      // Resolver recursivamente se o valor contém uma referência
-      return resolveRefString(value, visited);
-    }
-    return value;
+  if (target?.value) {
+    const value = target.value;
+    return typeof value === 'string' && value.includes('{') 
+      ? resolveReference(value, visited) 
+      : value;
   }
-  if (typeof hit === 'string') {
-    if (hit.includes('{')) {
-      // Resolver recursivamente se a string contém uma referência
-      return resolveRefString(hit, visited);
-    }
-    return hit;
+  
+  if (typeof target === 'string') {
+    return target.includes('{') 
+      ? resolveReference(target, visited) 
+      : target;
   }
+  
   return undefined;
 }
 
-function pickModeValue(token: any, key: string): string | undefined {
+/**
+ * Extrai valor específico do modo para um token
+ */
+function extractModeValue(token: any, modeKey: string): string | undefined {
   const modes = token?.original?.$extensions?.mode;
   if (!modes) return undefined;
-  const raw = modes[key];
-  if (typeof raw === 'string') {
-    return resolveRefString(raw) ?? raw;
-  }
-  return undefined;
+  
+  const rawValue = modes[modeKey];
+  return typeof rawValue === 'string' 
+    ? resolveReference(rawValue) ?? rawValue 
+    : undefined;
 }
 
 // === value transforms ===
@@ -150,7 +147,7 @@ StyleDictionary.registerTransform({
     return typeof token.value === 'string' && token.value.includes('{');
   },
   transformer: (token: TransformedToken) => {
-    const resolved = resolveRefString(token.value as string);
+    const resolved = resolveReference(token.value as string);
     return resolved ?? token.value;
   },
 });
@@ -209,7 +206,7 @@ StyleDictionary.registerFilter({
 
 StyleDictionary.registerFilter({
   name: 'filter/semantics-color-only',
-  matcher: (t) => t.path[0] === 'Semantics' && SECONDARY_COLOR_BRANCHES.has(t.path[1]),
+  matcher: (t) => t.path[0] === 'Semantics' && COLOR_BRANCHES.has(t.path[1]),
 });
 
 StyleDictionary.registerFilter({
@@ -222,45 +219,63 @@ StyleDictionary.registerFilter({
   matcher: (t) => t.path[0] === 'Global',
 });
 
+/**
+ * Valida se a marca existe e retorna tema padrão
+ */
+function validateBrandAndGetDefaultTheme(brand: string): string {
+  if (!brand) {
+    throw new Error('Brand option is required');
+  }
+  
+  if (!availableBrands.includes(brand)) {
+    throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
+  }
+
+  return availableThemes.includes(DEFAULT_THEME) ? DEFAULT_THEME : availableThemes[0];
+}
+
+/**
+ * Processa tokens para um tema/marca específico
+ */
+function processTokensForMode(tokens: TransformedToken[], brand: string, theme: string) {
+  const result: Array<{ name: string; value: string }> = [];
+  
+  for (const token of tokens) {
+    let value: string;
+    
+    if (token.path[0] === 'Semantics') {
+      value = extractModeValue(token, theme) ?? token.value;
+    } else if (token.path[0] === 'Brands') {
+      value = extractModeValue(token, brand) ?? token.value;
+    } else if (token.path[0] === 'Global') {
+      value = token.value as string;
+    } else {
+      continue;
+    }
+    
+    result.push({ name: token.name, value });
+  }
+  
+  return result;
+}
+
 // === formatters ===
 StyleDictionary.registerFormat({
   name: 'format/dds-css-with-themes',
   formatter: ({ dictionary, file }) => {
     const brand = (file.options as any)?.brand;
+    const defaultTheme = validateBrandAndGetDefaultTheme(brand);
     
-    if (!brand) {
-      throw new Error('Brand option is required for format/dds-css-with-themes');
-    }
+    const cssDecl = (name: string, value: string) => `  ${name}: ${value};`;
     
-    if (!availableBrands.includes(brand)) {
-      throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
-    }
-
-    function cssDecl(name: string, value: string) {
-      return `  ${name}: ${value};`;
-    }
-
-    // Determinar tema padrão (sempre 'light' se disponível, senão o primeiro)
-    const defaultTheme = availableThemes.includes('light') ? 'light' : availableThemes[0];
-    
-    // TEMA PADRÃO (completo) - sempre light ou primeiro tema
-    const defaultLines: string[] = [];
-    for (const t of dictionary.allTokens) {
-      if (t.path[0] === 'Semantics') {
-        const v = pickModeValue(t, defaultTheme) ?? t.value;
-        defaultLines.push(cssDecl(t.name, v));
-      } else if (t.path[0] === 'Brands') {
-        const v = pickModeValue(t, brand) ?? t.value;
-        defaultLines.push(cssDecl(t.name, v));
-      } else if (t.path[0] === 'Global') {
-        defaultLines.push(cssDecl(t.name, t.value as string));
-      }
-    }
+    // Processar tema padrão
+    const defaultTokens = processTokensForMode(dictionary.allTokens, brand, defaultTheme);
+    const defaultLines = defaultTokens.map(({ name, value }) => cssDecl(name, value));
 
     const blocks: string[] = [];
 
-    // Bloco padrão/light
-    const defaultSelector = defaultTheme === 'light' 
+    // Bloco padrão
+    const defaultSelector = defaultTheme === DEFAULT_THEME 
       ? ':root,\n:root[data-color-scheme="light"]' 
       : `:root,\n:root[data-color-scheme="${defaultTheme}"]`;
       
@@ -268,15 +283,15 @@ StyleDictionary.registerFormat({
 ${defaultLines.join('\n')}
 }`);
 
-    // Outros temas (apenas cores de Semantics)
+    // Outros temas (apenas cores)
     for (const theme of availableThemes) {
-      if (theme === defaultTheme) continue; // Pular o tema padrão que já foi processado
+      if (theme === defaultTheme) continue;
       
       const themeLines: string[] = [];
-      for (const t of dictionary.allTokens) {
-        if (t.path[0] === 'Semantics' && SECONDARY_COLOR_BRANCHES.has(t.path[1])) {
-          const v = pickModeValue(t, theme);
-          if (v) themeLines.push(cssDecl(t.name, v));
+      for (const token of dictionary.allTokens) {
+        if (token.path[0] === 'Semantics' && COLOR_BRANCHES.has(token.path[1])) {
+          const value = extractModeValue(token, theme);
+          if (value) themeLines.push(cssDecl(token.name, value));
         }
       }
       
@@ -291,76 +306,55 @@ ${themeLines.join('\n')}
   },
 });
 
-// SCSS (apenas tema padrão – estático)
+// SCSS (apenas tema padrão)
 StyleDictionary.registerFormat({
   name: 'format/dds-scss-light',
   formatter: ({ dictionary, file }) => {
     const brand = (file.options as any)?.brand;
-    
-    if (!brand) {
-      throw new Error('Brand option is required for format/dds-scss-light');
-    }
-    
-    if (!availableBrands.includes(brand)) {
-      throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
-    }
+    const defaultTheme = validateBrandAndGetDefaultTheme(brand);
 
-    // Determinar tema padrão (sempre 'light' se disponível, senão o primeiro)
-    const defaultTheme = availableThemes.includes('light') ? 'light' : availableThemes[0];
-
-    const lines: string[] = [];
-
-    for (const t of dictionary.allTokens) {
-      if (t.path[0] === 'Semantics') {
-        const v = pickModeValue(t, defaultTheme) ?? t.value;
-        lines.push(`${t.name}: ${v};`);
-      } else if (t.path[0] === 'Brands') {
-        const v = pickModeValue(t, brand) ?? t.value;
-        lines.push(`${t.name}: ${v};`);
-      } else if (t.path[0] === 'Global') {
-        lines.push(`${t.name}: ${t.value};`);
-      }
-    }
+    const tokens = processTokensForMode(dictionary.allTokens, brand, defaultTheme);
+    const lines = tokens.map(({ name, value }) => `${name}: ${value};`);
 
     return lines.join('\n') + '\n';
   },
 });
 
-// === config ===
-// Gerar plataformas dinamicamente baseado nas marcas disponíveis
-const platforms: any = {};
-
-for (const brand of availableBrands) {
+/**
+ * Gera configuração de plataforma para uma marca específica
+ */
+function createPlatformConfig(brand: string) {
   const brandLower = brand.toLowerCase();
   
-  // CSS platform
-  platforms[`${brandLower}_css`] = {
-    transformGroup: 'dds/css',
-    buildPath: `dist/tokens/${brandLower}/css/`,
-    files: [
-      {
+  return {
+    [`${brandLower}_css`]: {
+      transformGroup: 'dds/css',
+      buildPath: `dist/tokens/${brandLower}/css/`,
+      files: [{
         destination: 'tokens.css',
         format: 'format/dds-css-with-themes',
         filter: 'filter/no-primitives',
         options: { brand }
-      }
-    ]
-  };
-  
-  // SCSS platform
-  platforms[`${brandLower}_scss`] = {
-    transformGroup: 'dds/scss',
-    buildPath: `dist/tokens/${brandLower}/scss/`,
-    files: [
-      {
+      }]
+    },
+    [`${brandLower}_scss`]: {
+      transformGroup: 'dds/scss',
+      buildPath: `dist/tokens/${brandLower}/scss/`,
+      files: [{
         destination: 'tokens.scss',
         format: 'format/dds-scss-light',
         filter: 'filter/no-primitives',
         options: { brand }
-      }
-    ]
+      }]
+    }
   };
 }
+
+// Gerar todas as plataformas dinamicamente
+const platforms = availableBrands.reduce((acc, brand) => ({
+  ...acc,
+  ...createPlatformConfig(brand)
+}), {});
 
 const sd = StyleDictionary.extend({
   source: [MERGED],
