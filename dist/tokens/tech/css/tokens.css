@@ -42,17 +42,13 @@
   --dds_color_container_brand_on_primary: #F1F1F1;
   --dds_color_container_brand_secondary: #F1F1F1;
   --dds_color_container_brand_on_secundary: #F1F1F1;
-  --dds_color_motion_time_soft: 1px;
-  --dds_color_motion_time_static: 2px;
-  --dds_color_motion_repeat_loop: 1px;
-  --dds_color_motion_scale_grow: 1px;
-  --dds_color_motion_scale_full: 1px;
-  --dds_color_motion_scale_shirink_grow: 1px;
-  --dds_color_motion_scale_shirink_full: 1px;
-  --dds_color_motion_scale_grown_grow: 1px;
-  --dds_color_motion_scale_grown_full: 1px;
-  --dds_color_motion_easing_linear: 1px;
-  --dds_color_motion_easing_exit: 1px;
+  --dds_motion_time_instant: 100ms;
+  --dds_motion_time_quicker: 200ms;
+  --dds_motion_easing_linear: 1ms;
+  --dds_motion_easing_exit: 1ms;
+  --dds_motion_scale_grown: 100;
+  --dds_motion_scale_inexistent: 0;
+  --dds_motion_repeat_loop: infinite;
   --dds_color_brand_primary_base: #1C20E7;
   --dds_color_brand_primary_lightest: #3FA2FF;
   --dds_color_brand_primary_darkest: #010377;
@@ -125,17 +121,6 @@
   --dds_color_container_brand_on_primary: #1A1A1A;
   --dds_color_container_brand_secondary: #1A1A1A;
   --dds_color_container_brand_on_secundary: #1A1A1A;
-  --dds_color_motion_time_soft: 1px;
-  --dds_color_motion_time_static: 2px;
-  --dds_color_motion_repeat_loop: 1px;
-  --dds_color_motion_scale_grow: 1px;
-  --dds_color_motion_scale_full: 1px;
-  --dds_color_motion_scale_shirink_grow: 1px;
-  --dds_color_motion_scale_shirink_full: 1px;
-  --dds_color_motion_scale_grown_grow: 1px;
-  --dds_color_motion_scale_grown_full: 1px;
-  --dds_color_motion_easing_linear: 1px;
-  --dds_color_motion_easing_exit: 1px;
 }
 
 :root[data-color-scheme="contrast"] {
@@ -180,15 +165,4 @@
   --dds_color_container_brand_on_primary: #FFE100;
   --dds_color_container_brand_secondary: #FFE100;
   --dds_color_container_brand_on_secundary: #FFE100;
-  --dds_color_motion_time_soft: 1px;
-  --dds_color_motion_time_static: 2px;
-  --dds_color_motion_repeat_loop: 1px;
-  --dds_color_motion_scale_grow: 1px;
-  --dds_color_motion_scale_full: 1px;
-  --dds_color_motion_scale_shirink_grow: 1px;
-  --dds_color_motion_scale_shirink_full: 1px;
-  --dds_color_motion_scale_grown_grow: 1px;
-  --dds_color_motion_scale_grown_full: 1px;
-  --dds_color_motion_easing_linear: 1px;
-  --dds_color_motion_easing_exit: 1px;
 }
