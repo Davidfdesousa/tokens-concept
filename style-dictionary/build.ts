@@ -7,6 +7,36 @@ const MERGED = path.join(ROOT, '.tmp', 'merged.tokens.json');
 
 let mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
 
+// Função para descobrir todas as marcas disponíveis no JSON
+function discoverBrands(tree: any): string[] {
+  const brandsSet = new Set<string>();
+  
+  function traverse(obj: any) {
+    if (Array.isArray(obj)) {
+      obj.forEach(traverse);
+    } else if (obj && typeof obj === 'object') {
+      // Procurar por $extensions.mode
+      if (obj.$extensions?.mode && typeof obj.$extensions.mode === 'object') {
+        Object.keys(obj.$extensions.mode).forEach(brand => {
+          // Filtrar apenas brands, não modos de cor
+          if (!['light', 'dark', 'contrast'].includes(brand)) {
+            brandsSet.add(brand);
+          }
+        });
+      }
+      
+      // Continuar traversing
+      Object.values(obj).forEach(traverse);
+    }
+  }
+  
+  traverse(tree);
+  return Array.from(brandsSet).sort();
+}
+
+const availableBrands = discoverBrands(mergedTree);
+console.log(`📋 Marcas descobertas: ${availableBrands.join(', ')}`);
+
 const STRIP_SEGMENTS = new Set(['Semantics', 'Brands', 'Global']);
 const SECONDARY_COLOR_BRANCHES = new Set(['color', 'text', 'container', 'feedback', 'action', 'stroke']);
 
@@ -148,7 +178,15 @@ StyleDictionary.registerFilter({
 StyleDictionary.registerFormat({
   name: 'format/dds-css-with-themes',
   formatter: ({ dictionary, file }) => {
-    const brand = (file.options as any)?.brand as 'Tech' | 'Nature' | 'Creative';
+    const brand = (file.options as any)?.brand;
+    
+    if (!brand) {
+      throw new Error('Brand option is required for format/dds-css-with-themes');
+    }
+    
+    if (!availableBrands.includes(brand)) {
+      throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
+    }
 
     function cssDecl(name: string, value: string) {
       return `  ${name}: ${value};`;
@@ -216,7 +254,15 @@ ${contrastLines.join('\n')}
 StyleDictionary.registerFormat({
   name: 'format/dds-scss-light',
   formatter: ({ dictionary, file }) => {
-    const brand = (file.options as any)?.brand as 'Tech' | 'Nature' | 'Creative';
+    const brand = (file.options as any)?.brand;
+    
+    if (!brand) {
+      throw new Error('Brand option is required for format/dds-scss-light');
+    }
+    
+    if (!availableBrands.includes(brand)) {
+      throw new Error(`Brand "${brand}" not found. Available brands: ${availableBrands.join(', ')}`);
+    }
 
     const lines: string[] = [];
 
@@ -237,84 +283,44 @@ StyleDictionary.registerFormat({
 });
 
 // === config ===
+// Gerar plataformas dinamicamente baseado nas marcas disponíveis
+const platforms: any = {};
+
+for (const brand of availableBrands) {
+  const brandLower = brand.toLowerCase();
+  
+  // CSS platform
+  platforms[`${brandLower}_css`] = {
+    transformGroup: 'dds/css',
+    buildPath: `dist/tokens/${brandLower}/css/`,
+    files: [
+      {
+        destination: 'tokens.css',
+        format: 'format/dds-css-with-themes',
+        filter: 'filter/no-primitives',
+        options: { brand }
+      }
+    ]
+  };
+  
+  // SCSS platform
+  platforms[`${brandLower}_scss`] = {
+    transformGroup: 'dds/scss',
+    buildPath: `dist/tokens/${brandLower}/scss/`,
+    files: [
+      {
+        destination: 'tokens.scss',
+        format: 'format/dds-scss-light',
+        filter: 'filter/no-primitives',
+        options: { brand }
+      }
+    ]
+  };
+}
+
 const sd = StyleDictionary.extend({
   source: [MERGED],
-  platforms: {
-    tech_css: {
-      transformGroup: 'dds/css',
-      buildPath: 'dist/tokens/tech/css/',
-      files: [
-        {
-          destination: 'tokens.css',
-          format: 'format/dds-css-with-themes',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Tech' }
-        }
-      ]
-    },
-    tech_scss: {
-      transformGroup: 'dds/scss',
-      buildPath: 'dist/tokens/tech/scss/',
-      files: [
-        {
-          destination: 'tokens.scss',
-          format: 'format/dds-scss-light',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Tech' }
-        }
-      ]
-    },
-
-    nature_css: {
-      transformGroup: 'dds/css',
-      buildPath: 'dist/tokens/nature/css/',
-      files: [
-        {
-          destination: 'tokens.css',
-          format: 'format/dds-css-with-themes',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Nature' }
-        }
-      ]
-    },
-    nature_scss: {
-      transformGroup: 'dds/scss',
-      buildPath: 'dist/tokens/nature/scss/',
-      files: [
-        {
-          destination: 'tokens.scss',
-          format: 'format/dds-scss-light',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Nature' }
-        }
-      ]
-    },
-
-    creative_css: {
-      transformGroup: 'dds/css',
-      buildPath: 'dist/tokens/creative/css/',
-      files: [
-        {
-          destination: 'tokens.css',
-          format: 'format/dds-css-with-themes',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Creative' }
-        }
-      ]
-    },
-    creative_scss: {
-      transformGroup: 'dds/scss',
-      buildPath: 'dist/tokens/creative/scss/',
-      files: [
-        {
-          destination: 'tokens.scss',
-          format: 'format/dds-scss-light',
-          filter: 'filter/no-primitives',
-          options: { brand: 'Creative' }
-        }
-      ]
-    }
-  }
+  platforms
 });
 
 // build
