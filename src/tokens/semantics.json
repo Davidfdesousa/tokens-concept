@@ -825,12 +825,12 @@
     },
     "opacity": {
       "transparent": {
-        "value": "0.07999999821186066px",
+        "value": 0.08,
         "type": "other"
       },
       "semi": {
         "transparent": {
-          "value": "0.23999999463558197px",
+          "value": 0.24,
           "type": "other"
         }
       }
