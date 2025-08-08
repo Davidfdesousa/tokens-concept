@@ -7,30 +7,6 @@ const MERGED = path.join(ROOT, '.tmp', 'merged.tokens.json');
 
 let mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
 
-// Preprocessar para corrigir referências incorretas
-function fixReferences(obj: any): any {
-  if (Array.isArray(obj)) {
-    return obj.map(fixReferences);
-  }
-  if (obj && typeof obj === 'object') {
-    const result: any = {};
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = fixReferences(value);
-    }
-    return result;
-  }
-  if (typeof obj === 'string') {
-    // Corrigir referência incorreta específica
-    return obj.replace('{Semantics.color.text.body}', '{Semantics.color.text.neutral.body}');
-  }
-  return obj;
-}
-
-mergedTree = fixReferences(mergedTree);
-
-// Salvar o arquivo corrigido
-fs.writeFileSync(MERGED, JSON.stringify(mergedTree, null, 2));
-
 const STRIP_SEGMENTS = new Set(['Semantics', 'Brands', 'Global']);
 const SECONDARY_COLOR_BRANCHES = new Set(['color', 'text', 'container', 'feedback', 'action', 'stroke']);
 
