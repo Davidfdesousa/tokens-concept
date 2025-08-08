@@ -25,7 +25,7 @@
               }
             }
           },
-          "onPimary": {
+          "onPrimary": {
             "value": "{colors.neutral.200}",
             "type": "other",
             "$extensions": {
@@ -36,7 +36,7 @@
               }
             }
           },
-          "onSecudary": {
+          "onSecundary": {
             "value": "{colors.neutral.200}",
             "type": "other",
             "$extensions": {
@@ -470,7 +470,7 @@
               }
             }
           },
-          "onPimary": {
+          "onPrimary": {
             "value": "{colors.neutral.0}",
             "type": "other",
             "$extensions": {
@@ -492,7 +492,7 @@
               }
             }
           },
-          "onSecudary": {
+          "onSecundary": {
             "value": "{colors.neutral.0}",
             "type": "other",
             "$extensions": {

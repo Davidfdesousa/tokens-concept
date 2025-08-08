@@ -2,8 +2,8 @@
 :root[data-color-scheme="light"] {
   --dds_border: #F1F1F1;
   --dds_color_surface_brand_primary: #F1F1F1;
-  --dds_color_surface_brand_on_pimary: #CCCCCC;
-  --dds_color_surface_brand_on_secudary: #CCCCCC;
+  --dds_color_surface_brand_on_primary: #CCCCCC;
+  --dds_color_surface_brand_on_secundary: #CCCCCC;
   --dds_color_surface_brand_secondary: #F1F1F1;
   --dds_color_surface_neutral_lowest: #F1F1F1;
   --dds_color_surface_neutral_low: #CCCCCC;
@@ -39,9 +39,9 @@
   --dds_color_container_feedback_error_lowest: #F1F1F1;
   --dds_color_container_feedback_error_high: #1A1A1A;
   --dds_color_container_brand_primary: #F1F1F1;
-  --dds_color_container_brand_on_pimary: #F1F1F1;
+  --dds_color_container_brand_on_primary: #F1F1F1;
   --dds_color_container_brand_secondary: #F1F1F1;
-  --dds_color_container_brand_on_secudary: #F1F1F1;
+  --dds_color_container_brand_on_secundary: #F1F1F1;
   --dds_color_motion_time_soft: 1px;
   --dds_color_motion_time_static: 2px;
   --dds_color_motion_repeat_loop: 1px;
@@ -85,8 +85,8 @@
 
 :root[data-color-scheme="dark"] {
   --dds_color_surface_brand_primary: #1A1A1A;
-  --dds_color_surface_brand_on_pimary: #CCCCCC;
-  --dds_color_surface_brand_on_secudary: #CCCCCC;
+  --dds_color_surface_brand_on_primary: #CCCCCC;
+  --dds_color_surface_brand_on_secundary: #CCCCCC;
   --dds_color_surface_brand_secondary: #1A1A1A;
   --dds_color_surface_neutral_lowest: #1A1A1A;
   --dds_color_surface_neutral_low: #1A1A1A;
@@ -122,9 +122,9 @@
   --dds_color_container_feedback_error_lowest: #1A1A1A;
   --dds_color_container_feedback_error_high: #CCCCCC;
   --dds_color_container_brand_primary: #1A1A1A;
-  --dds_color_container_brand_on_pimary: #1A1A1A;
+  --dds_color_container_brand_on_primary: #1A1A1A;
   --dds_color_container_brand_secondary: #1A1A1A;
-  --dds_color_container_brand_on_secudary: #1A1A1A;
+  --dds_color_container_brand_on_secundary: #1A1A1A;
   --dds_color_motion_time_soft: 1px;
   --dds_color_motion_time_static: 2px;
   --dds_color_motion_repeat_loop: 1px;
@@ -140,8 +140,8 @@
 
 :root[data-color-scheme="contrast"] {
   --dds_color_surface_brand_primary: #FFE100;
-  --dds_color_surface_brand_on_pimary: #FFE100;
-  --dds_color_surface_brand_on_secudary: #FFE100;
+  --dds_color_surface_brand_on_primary: #FFE100;
+  --dds_color_surface_brand_on_secundary: #FFE100;
   --dds_color_surface_brand_secondary: #FFE100;
   --dds_color_surface_neutral_lowest: #FFE100;
   --dds_color_surface_neutral_low: #FFE100;
@@ -177,9 +177,9 @@
   --dds_color_container_feedback_error_lowest: #1A1A1A;
   --dds_color_container_feedback_error_high: #F1F1F1;
   --dds_color_container_brand_primary: #FFE100;
-  --dds_color_container_brand_on_pimary: #FFE100;
+  --dds_color_container_brand_on_primary: #FFE100;
   --dds_color_container_brand_secondary: #FFE100;
-  --dds_color_container_brand_on_secudary: #FFE100;
+  --dds_color_container_brand_on_secundary: #FFE100;
   --dds_color_motion_time_soft: 1px;
   --dds_color_motion_time_static: 2px;
   --dds_color_motion_repeat_loop: 1px;

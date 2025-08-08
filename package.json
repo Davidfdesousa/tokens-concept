@@ -5,11 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "tokens:clean": "rimraf dist/tokens .tmp",
     "tokens:prepare": "tsx scripts/prepare-tokens.ts",
-    "tokens:build": "npm run tokens:prepare && tsx style-dictionary/build.ts",
-    "tokens:watch": "chokidar 'src/tokens/**/*.json' -c 'npm run tokens:build'"
+    "build": "npm run tokens:prepare && tsx style-dictionary/build.ts",
+    "tokens:watch": "chokidar 'src/tokens/**/*.json' -c 'npm run build'"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",

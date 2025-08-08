@@ -25,7 +25,7 @@
               }
             }
           },
-          "onPimary": {
+          "onPrimary": {
             "value": "{colors.neutral.200}",
             "type": "other",
             "$extensions": {
@@ -36,7 +36,7 @@
               }
             }
           },
-          "onSecudary": {
+          "onSecundary": {
             "value": "{colors.neutral.200}",
             "type": "other",
             "$extensions": {
@@ -470,7 +470,7 @@
               }
             }
           },
-          "onPimary": {
+          "onPrimary": {
             "value": "{colors.neutral.0}",
             "type": "other",
             "$extensions": {
@@ -492,7 +492,7 @@
               }
             }
           },
-          "onSecudary": {
+          "onSecundary": {
             "value": "{colors.neutral.0}",
             "type": "other",
             "$extensions": {
@@ -511,14 +511,22 @@
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           },
           "static": {
             "value": "2px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "2px", "dark": "2px", "contrast": "2px" }
+              "mode": {
+                "light": "2px",
+                "dark": "2px",
+                "contrast": "2px"
+              }
             }
           }
         },
@@ -527,7 +535,11 @@
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           }
         },
@@ -536,14 +548,22 @@
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           },
           "full": {
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           },
           "shirink": {
@@ -551,14 +571,22 @@
               "value": "1px",
               "type": "other",
               "$extensions": {
-                "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+                "mode": {
+                  "light": "1px",
+                  "dark": "1px",
+                  "contrast": "1px"
+                }
               }
             },
             "full": {
               "value": "1px",
               "type": "other",
               "$extensions": {
-                "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+                "mode": {
+                  "light": "1px",
+                  "dark": "1px",
+                  "contrast": "1px"
+                }
               }
             }
           },
@@ -567,14 +595,22 @@
               "value": "1px",
               "type": "other",
               "$extensions": {
-                "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+                "mode": {
+                  "light": "1px",
+                  "dark": "1px",
+                  "contrast": "1px"
+                }
               }
             },
             "full": {
               "value": "1px",
               "type": "other",
               "$extensions": {
-                "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+                "mode": {
+                  "light": "1px",
+                  "dark": "1px",
+                  "contrast": "1px"
+                }
               }
             }
           }
@@ -584,14 +620,22 @@
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           },
           "exit": {
             "value": "1px",
             "type": "other",
             "$extensions": {
-              "mode": { "light": "1px", "dark": "1px", "contrast": "1px" }
+              "mode": {
+                "light": "1px",
+                "dark": "1px",
+                "contrast": "1px"
+              }
             }
           }
         }
@@ -679,7 +723,11 @@
           "value": "4px",
           "type": "other",
           "$extensions": {
-            "mode": { "Tech": "4px", "Nature": "4px", "Creative": "4px" }
+            "mode": {
+              "Tech": "4px",
+              "Nature": "4px",
+              "Creative": "4px"
+            }
           }
         }
       }
@@ -690,7 +738,11 @@
           "value": "700px",
           "type": "other",
           "$extensions": {
-            "mode": { "Tech": "700px", "Nature": "700px", "Creative": "700px" }
+            "mode": {
+              "Tech": "700px",
+              "Nature": "700px",
+              "Creative": "700px"
+            }
           }
         }
       },
@@ -699,14 +751,22 @@
           "value": "Roboto",
           "type": "other",
           "$extensions": {
-            "mode": { "Tech": "Roboto", "Nature": "Roboto", "Creative": "Roboto" }
+            "mode": {
+              "Tech": "Roboto",
+              "Nature": "Roboto",
+              "Creative": "Roboto"
+            }
           }
         },
         "highlight": {
           "value": "Arial",
           "type": "other",
           "$extensions": {
-            "mode": { "Tech": "Arial", "Nature": "Arial", "Creative": "Arial" }
+            "mode": {
+              "Tech": "Arial",
+              "Nature": "Arial",
+              "Creative": "Arial"
+            }
           }
         }
       }
@@ -714,43 +774,97 @@
   },
   "Global": {
     "spacing": {
-      "100": { "value": "{spacing.1}", "type": "other" },
-      "200": { "value": "{spacing.2}", "type": "other" }
+      "100": {
+        "value": "{spacing.1}",
+        "type": "other"
+      },
+      "200": {
+        "value": "{spacing.2}",
+        "type": "other"
+      }
     },
     "sizing": {
-      "100": { "value": "{sizing.unit_8}", "type": "other" },
-      "200": { "value": "{sizing.unit_16}", "type": "other" },
-      "300": { "value": "{sizing.unit_24}", "type": "other" }
+      "100": {
+        "value": "{sizing.unit_8}",
+        "type": "other"
+      },
+      "200": {
+        "value": "{sizing.unit_16}",
+        "type": "other"
+      },
+      "300": {
+        "value": "{sizing.unit_24}",
+        "type": "other"
+      }
     },
     "font": {
       "size": {
-        "125": { "value": "12px", "type": "other" },
-        "200": { "value": "16px", "type": "other" },
-        "300": { "value": "24px", "type": "other" }
+        "125": {
+          "value": "12px",
+          "type": "other"
+        },
+        "200": {
+          "value": "16px",
+          "type": "other"
+        },
+        "300": {
+          "value": "24px",
+          "type": "other"
+        }
       },
       "lineHeight": {
-        "100": { "value": "16px", "type": "other" },
-        "200": { "value": "24px", "type": "other" }
+        "100": {
+          "value": "16px",
+          "type": "other"
+        },
+        "200": {
+          "value": "24px",
+          "type": "other"
+        }
       }
     },
     "opacity": {
-      "transparent": { "value": "0.07999999821186066px", "type": "other" },
+      "transparent": {
+        "value": "0.07999999821186066px",
+        "type": "other"
+      },
       "semi": {
-        "transparent": { "value": "0.23999999463558197px", "type": "other" }
+        "transparent": {
+          "value": "0.23999999463558197px",
+          "type": "other"
+        }
       }
     },
     "stroke": {
       "width": {
-        "none": { "value": "{sizing.unit_1}", "type": "other" },
-        "thin": { "value": "{sizing.unit_8}", "type": "other" },
-        "thick": { "value": "{sizing.unit_8}", "type": "other" }
+        "none": {
+          "value": "{sizing.unit_1}",
+          "type": "other"
+        },
+        "thin": {
+          "value": "{sizing.unit_8}",
+          "type": "other"
+        },
+        "thick": {
+          "value": "{sizing.unit_8}",
+          "type": "other"
+        }
       }
     },
     "corner": {
       "radius": {
-        "none": { "value": "0px", "type": "other" },
-        "thin": { "value": "{sizing.unit_1}", "type": "other" },
-        "thick": { "value": "4px", "type": "other" }
+        "none": {
+          "value": "0px",
+          "type": "other"
+        },
+        "thin": {
+          "value": "{sizing.unit_1}",
+          "type": "other"
+        },
+        "thick": {
+          "value": "4px",
+          "type": "other"
+        }
       }
     }
   }
