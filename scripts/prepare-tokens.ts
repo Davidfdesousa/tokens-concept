@@ -5,7 +5,6 @@
  * aplicando transformações e correções necessárias antes de serem processados pelo Style Dictionary.
  * 
  * Funcionalidades:
- * - Normaliza chaves com espaços
  * - Corrige referências de tokens
  * - Remove unidades incorretas (px em opacity, font-weight)
  * - Converte unidades de motion (px → ms)
@@ -38,22 +37,7 @@ function writeJson(file: string, data: AnyObj) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
-/**
- * Mapeia chaves de um objeto recursivamente usando uma função de transformação
- * Útil para normalizar nomes de propriedades (ex: "low 2" → "low_2")
- */
-function deepMapKeys(obj: AnyObj, replacer: (k: string, path: string[]) => string, pathArr: string[] = []): AnyObj {
-  if (Array.isArray(obj)) return obj.map((v, i) => deepMapKeys(v, replacer, [...pathArr, String(i)]));
-  if (obj && typeof obj === 'object') {
-    const out: AnyObj = {};
-    for (const [k, v] of Object.entries(obj)) {
-      const newKey = replacer(k, pathArr);
-      out[newKey] = deepMapKeys(v, replacer, [...pathArr, newKey]);
-    }
-    return out;
-  }
-  return obj;
-}
+
 
 /**
  * Substitui strings que contêm referências de tokens usando regex
@@ -111,35 +95,28 @@ function prepare() {
   const primitives = readJson(path.join(SRC, 'primitives.json'));
   const semanticsBrandsGlobal = readJson(path.join(SRC, 'semantics.json'));
 
-  // 1) Normalizar chaves com espaços: "low 2" → "low_2"
-  // Necessário porque espaços em chaves podem causar problemas no Style Dictionary
-  const normalizedSemantics = deepMapKeys(semanticsBrandsGlobal, (key, p) => {
-    if (key === 'low 2') return 'low_2';
-    return key;
-  });
-
-  // 2) Corrigir referências incompletas: {color.text.body} → {Semantics.color.text.body}
+  // 1) Corrigir referências incompletas: {color.text.body} → {Semantics.color.text.body}
   // Algumas referências nos tokens fonte estão sem o namespace completo
-  const fixedRefSemantics = replaceInStringRefs(normalizedSemantics, /\{color\./g, () => '{Semantics.color.');
+  const fixedRefSemantics = replaceInStringRefs(semanticsBrandsGlobal, /\{color\./g, () => '{Semantics.color.');
 
-  // 3) Coerções de valores específicas para corrigir unidades incorretas nos dados fonte
+  // 2) Coerções de valores específicas para corrigir unidades incorretas nos dados fonte
   // TODO: Estes fixes deveriam ser aplicados diretamente nos JSONs fonte no futuro
   const coerced = mapValuesByPath(fixedRefSemantics, (val, p) => {
     if (typeof val !== 'string') return val;
 
     const pathStr = p.join('.');
 
-    // 3.1) Opacity: remover 'px' incorreto (ex: "0.5px" → "0.5")
+    // 2.1) Opacity: remover 'px' incorreto (ex: "0.5px" → "0.5")
     if (pathStr.startsWith('Global.opacity')) {
       return stripPxIfNumberString(val);
     }
 
-    // 3.2) Font weight: remover 'px' incorreto (ex: "700px" → "700")
+    // 2.2) Font weight: remover 'px' incorreto (ex: "700px" → "700")
     if (pathStr.includes('Brands.font.weight.bold')) {
       return stripPxIfNumberString(val);
     }
 
-    // 3.3) Motion: converter px para ms (ex: "200px" → "200ms")
+    // 2.3) Motion: converter px para ms (ex: "200px" → "200ms")
     if (pathStr.startsWith('Semantics.motion')) {
       const m = /^(-?\d+(\.\d+)?)px$/.exec(val.trim());
       return m ? `${m[1]}ms` : val;
@@ -148,7 +125,7 @@ function prepare() {
     return val;
   });
 
-  // 4) Flatten dos Primitives: expor colors/spacing/sizing no nível raiz
+  // 3) Flatten dos Primitives: expor colors/spacing/sizing no nível raiz
   // Isso permite que tokens referenciem diretamente {colors.blue.500} em vez de {Primitives.colors.blue.500}
   const flat: AnyObj = { ...coerced };
   if (primitives?.Primitives) {
@@ -158,7 +135,7 @@ function prepare() {
     if (sizing) flat['sizing'] = sizing;
   }
 
-  // 5) Salvar arquivo merged para o Style Dictionary processar
+  // 4) Salvar arquivo merged para o Style Dictionary processar
   writeJson(OUT, flat);
   console.log(`✔ Tokens preparados em ${OUT}`);
 }

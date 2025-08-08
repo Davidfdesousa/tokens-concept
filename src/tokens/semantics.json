@@ -81,28 +81,6 @@
                 "contrast": "{colors.yellow.500}"
               }
             }
-          },
-          "low 2": {
-            "value": "{colors.neutral.200}",
-            "type": "other",
-            "$extensions": {
-              "mode": {
-                "light": "{colors.neutral.200}",
-                "dark": "{colors.neutral.900}",
-                "contrast": "{colors.yellow.500}"
-              }
-            }
-          },
-          "lowest 2": {
-            "value": "{colors.neutral.0}",
-            "type": "other",
-            "$extensions": {
-              "mode": {
-                "light": "{colors.neutral.0}",
-                "dark": "{colors.neutral.900}",
-                "contrast": "{colors.yellow.500}"
-              }
-            }
           }
         }
       },
