@@ -2621,92 +2621,92 @@
       },
       "time": {
         "instant": {
-          "value": "{unit.100}",
+          "value": "{motionUnit.100}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.100}",
-              "Dark": "{unit.100}"
+              "Light": "{motionUnit.100}",
+              "Dark": "{motionUnit.100}"
             }
           }
         },
         "quicker": {
-          "value": "{unit.150}",
+          "value": "{motionUnit.150}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.100}",
-              "Dark": "{unit.100}"
+              "Light": "{motionUnit.100}",
+              "Dark": "{motionUnit.100}"
             }
           }
         },
         "quick": {
-          "value": "{unit.200}",
+          "value": "{motionUnit.200}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.200}",
-              "Dark": "{unit.200}"
+              "Light": "{motionUnit.200}",
+              "Dark": "{motionUnit.200}"
             }
           }
         },
         "nice": {
-          "value": "{unit.300}",
+          "value": "{motionUnit.300}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.300}",
-              "Dark": "{unit.300}"
+              "Light": "{motionUnit.300}",
+              "Dark": "{motionUnit.300}"
             }
           }
         },
         "nicer": {
-          "value": "{unit.400}",
+          "value": "{motionUnit.400}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.400}",
-              "Dark": "{unit.400}"
+              "Light": "{motionUnit.400}",
+              "Dark": "{motionUnit.400}"
             }
           }
         },
         "soft": {
-          "value": "{unit.500}",
+          "value": "{motionUnit.500}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.500}",
-              "Dark": "{unit.500}"
+              "Light": "{motionUnit.500}",
+              "Dark": "{motionUnit.500}"
             }
           }
         },
         "softer": {
-          "value": "{unit.600}",
+          "value": "{motionUnit.600}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.600}",
-              "Dark": "{unit.600}"
+              "Light": "{motionUnit.600}",
+              "Dark": "{motionUnit.600}"
             }
           }
         },
         "blink": {
-          "value": "{unit.050}",
+          "value": "{motionUnit.050}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.050}",
-              "Dark": "{unit.050}"
+              "Light": "{motionUnit.050}",
+              "Dark": "{motionUnit.050}"
             }
           }
         },
         "static": {
-          "value": "{unit.0}",
+          "value": "{motionUnit.0}",
           "type": "other",
           "$extensions": {
             "mode": {
-              "Light": "{unit.0}",
-              "Dark": "{unit.0}"
+              "Light": "{motionUnit.0}",
+              "Dark": "{motionUnit.0}"
             }
           }
         }
@@ -2779,6 +2779,44 @@
           }
         }
       }
+    }
+  },
+  "motionUnit": {
+    "0": {
+      "value": "0ms",
+      "type": "other"
+    },
+    "100": {
+      "value": "100ms",
+      "type": "other"
+    },
+    "150": {
+      "value": "150ms",
+      "type": "other"
+    },
+    "200": {
+      "value": "200ms",
+      "type": "other"
+    },
+    "300": {
+      "value": "300ms",
+      "type": "other"
+    },
+    "400": {
+      "value": "400ms",
+      "type": "other"
+    },
+    "500": {
+      "value": "500ms",
+      "type": "other"
+    },
+    "600": {
+      "value": "600ms",
+      "type": "other"
+    },
+    "050": {
+      "value": "0.5",
+      "type": "other"
     }
   }
 }

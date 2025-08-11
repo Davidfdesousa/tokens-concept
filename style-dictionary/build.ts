@@ -333,7 +333,7 @@ function createPlatformConfig(brand: string) {
       files: [{
         destination: 'tokens.css',
         format: 'format/dds-css-with-themes',
-        filter: 'filter/no-primitives',
+        // filter: 'filter/no-primitives', // TEMPORARILY REMOVED
         options: { brand }
       }]
     },
@@ -343,7 +343,7 @@ function createPlatformConfig(brand: string) {
       files: [{
         destination: 'tokens.scss',
         format: 'format/dds-scss-light',
-        filter: 'filter/no-primitives',
+        // filter: 'filter/no-primitives', // TEMPORARILY REMOVED
         options: { brand }
       }]
     }
