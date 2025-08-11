@@ -5,7 +5,7 @@
  * aplicando transformações e correções necessárias antes de serem processados pelo Style Dictionary.
  * 
  * Funcionalidades:
- * - Expõe primitives no nível raiz
+ * - Expõe Values e Colors dos primitives no nível raiz  
  * - Gera arquivo merged.tokens.json para o Style Dictionary
  */
 
@@ -41,20 +41,52 @@ function writeJson(file: string, data: AnyObj) {
 function prepare() {
   // Lê os arquivos fonte de tokens
   const primitives = readJson(path.join(SRC, 'primitives.json'));
-  const semanticsBrandsGlobal = readJson(path.join(SRC, 'semantics.json'));
+  const semantics = readJson(path.join(SRC, 'semantics.json'));
 
-  // 1) Flatten dos Primitives: expor colors/spacing/sizing no nível raiz
-  // Isso permite que tokens referenciem diretamente {colors.blue.500} em vez de {Primitives.colors.blue.500}
-  const flat: AnyObj = { ...semanticsBrandsGlobal };
-  if (primitives?.Primitives) {
-    const { colors, spacing, sizing } = primitives.Primitives;
-    if (colors) flat['colors'] = colors;
-    if (spacing) flat['spacing'] = spacing;
-    if (sizing) flat['sizing'] = sizing;
+  // Expor Values e Colors dos primitives no nível raiz
+  // Isso permite que tokens referenciem diretamente {unit.8} ou {color.brand.orange.500}
+  const merged: AnyObj = {
+    // Adicionar estruturas de primitives no root
+    ...primitives.Values,  // unit, motion, etc
+    ...primitives.Colors,  // color
+    
+    // Adicionar estruturas de semantics
+    ...semantics  // Global, Brands, Semantics
+  };
+
+  // Copiar estruturas de brand colors de Brands para o nível raiz
+  // Isso permite que {color.brand.primary.surface} funcione
+  if (merged.Brands?.color?.brand) {
+    if (!merged.color) merged.color = {};
+    if (!merged.color.brand) merged.color.brand = {};
+    
+    // Copiar primary, secondary do Brands para color.brand
+    ['primary', 'secondary'].forEach(brandKey => {
+      if (merged.Brands.color.brand[brandKey]) {
+        merged.color.brand[brandKey] = merged.Brands.color.brand[brandKey];
+      }
+    });
+
+    // Criar accent como entidade separada baseada no primary (padrão)
+    if (merged.Brands.color.brand.primary) {
+      const primary = merged.Brands.color.brand.primary;
+      merged.color.brand.accent = {
+        // Usar as propriedades accent existentes como base
+        value: primary.accent?.value || primary.darkest?.value,
+        type: "other",
+        container: primary.container,
+        onContainer: primary.onContainer,
+        soft: primary.soft,
+        surface: primary.surface,
+        onSurface: primary.onSurface,
+        // Copiar extensões se existirem
+        ...(primary.accent?.$extensions && { $extensions: primary.accent.$extensions })
+      };
+    }
   }
 
-  // 2) Salvar arquivo merged para o Style Dictionary processar
-  writeJson(OUT, flat);
+  // Salvar arquivo merged para o Style Dictionary processar
+  writeJson(OUT, merged);
   console.log(`✔ Tokens preparados em ${OUT}`);
 }
 
