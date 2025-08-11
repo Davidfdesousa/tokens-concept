@@ -5,7 +5,7 @@ import StyleDictionary, { TransformedToken } from 'style-dictionary';
 // Constants
 const ROOT = process.cwd();
 const MERGED = path.join(ROOT, '.tmp', 'merged.tokens.json');
-const DEFAULT_THEME = 'light';
+const DEFAULT_THEME = 'Light';
 
 const mergedTree = JSON.parse(fs.readFileSync(MERGED, 'utf8'));
 
@@ -276,7 +276,7 @@ StyleDictionary.registerFormat({
 
     // Bloco padrão
     const defaultSelector = defaultTheme === DEFAULT_THEME 
-      ? ':root,\n:root[data-color-scheme="light"]' 
+      ? ':root,\n:root[data-color-scheme="Light"]' 
       : `:root,\n:root[data-color-scheme="${defaultTheme}"]`;
       
     blocks.push(`${defaultSelector} {
